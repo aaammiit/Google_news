@@ -165,3 +165,13 @@
 #     'https://news.google.com/search?q=integrity%20and%20compliance%20officer%20appoint%20when%3A7d&hl=en-IN&gl=IN&ceid=IN%3Aen',
 #     'https://news.google.com/search?q=chief%20diversity%C2%A0officer%C2%A0appoint%20when%3A7d&hl=en-IN&gl=IN&ceid=IN%3Aen'
 # ]
+
+url01='https://news.google.com/search?q=chief%20compliance%20officer%20appoint%20when%3A7d&hl=en-IN&gl=IN&ceid=IN%3Aen'
+url02='https://news.google.com/search?q=general%20counsel%20appoint%20when%3A7d&hl=en-IN&gl=IN&ceid=IN%3Aen'
+url03='https://news.google.com/search?q=chief%20risk%20officer%20appoint%20when%3A7d&hl=en-IN&gl=IN&ceid=IN%3Aen'
+url04='https://news.google.com/search?q=chief%20legal%20officer%20appoint%20when%3A7d&hl=en-IN&gl=IN&ceid=IN%3Aen'
+url05='https://news.google.com/search?q=chief%20sustainability%20officer%20appoint%20when%3A7d&hl=en-IN&gl=IN&ceid=IN%3Aen'
+url06='https://news.google.com/search?q=integrity%20officer%20appoint%20when%3A7d&hl=en-IN&gl=IN&ceid=IN%3Aen'
+url07='https://news.google.com/search?q=ethics%20officer%20appoint%20when%3A7d&hl=en-IN&gl=IN&ceid=IN%3Aen'
+url08='https://news.google.com/search?q=chief%20diversity%C2%A0officer%C2%A0appoint%20when%3A7d&hl=en-IN&gl=IN&ceid=IN%3Aen'
+

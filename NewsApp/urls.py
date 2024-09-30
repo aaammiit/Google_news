@@ -24,6 +24,6 @@ urlpatterns = [
     path('',v.Home),
     path('send_file',v.Send_file),
     path('search_news',v.Search_News),
-    path('get_news',v.Get_news),
+    # path('get_news',v.Get_news),
     path('clear_news',v.Clear_news),
 ]

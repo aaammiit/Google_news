@@ -94,24 +94,15 @@
             <div class="text-center text-warning py-3 w-100 bd-highlight diva">
                 <a href="send_file" class="btn btn-primary"><i class="fa-regular fa-file" style="color: #cd9d18;"></i>
                     Send File</a>
-                <a href="get_news" class="btn btn-primary"><i class="fa-regular fa-file" style="color: #cd9d18;"></i>
-                    Get News</a>
-                <a href="clear_news" class="btn btn-primary"><i class="fa-regular fa-file" style="color: #cd9d18;"></i>
-                    Clear</a>
+                <!-- <a href="get_news" class="btn btn-primary"><i class="fa-regular fa-file" style="color: #cd9d18;"></i>
+                    Get News</a> -->
+                <!-- <a href="clear_news" class="btn btn-primary"><i class="fa-regular fa-file" style="color: #cd9d18;"></i>
+                    Clear</a> -->
             </div>
 
 
         </div>
-        {% if messages %}
-        <ul class="messages">
-            {% for message in messages %}
-            <li{% if message.tags %} class="{{ message.tags }}" {% endif %}>
-                {% if message.level == DEFAULT_MESSAGE_LEVELS.ERROR %}Important: {% endif %}
-                <script>alert('{{ message }}')</script>
-                </li>
-                {% endfor %}
-        </ul>
-        {% endif %}
+        
     </div>
     <div class="container my-2" style="width: 100%; overflow: hidden;">
         <form action="/search_news" method="post">
@@ -127,10 +118,12 @@
                 </option>
                 <option value="chief%20sustainability%20officer%20appoint%" class="text-dark">chief sustainability
                     officer appoint</option>
-                <option value="integrity%20and%20compliance%20officer%20appoint%" class="text-dark">integrity and
-                    compliance officer appoint</option>
-                <option value="chief%20diversity%C2%A0officer%C2%A0appoint%" class="text-dark">chief diversity officer
-                    appoint</option>
+                <option value="integrity%20officer%20appoint%" class="text-dark">integrity officer appoint
+                </option>
+                <option value="ethics%20officer%20appoint%" class="text-dark">ethics officer appoint 
+                </option>
+                    <option value="chief%20diversity%C2%A0officer%C2%A0appoint%" class="text-dark">chief diversity officer appoint</option>
+                    
             </select>
             <!-- <label for="" style="display: inline-block; margin-right: 10px;">Select Duration Of News</label> -->
             <select name="time_period" id=""
