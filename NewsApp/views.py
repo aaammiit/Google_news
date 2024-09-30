@@ -105,7 +105,7 @@ def Get_news(request):
         print(len(Record1))
         request.session['data']=Record1
         data={'data':Record1}
-        return render(request,'all_news.html',data)
+        return render(request,'All_news.html',data)
 
 def update_news(request=None):
     global Record
