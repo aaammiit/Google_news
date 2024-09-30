@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Monkey News</title>
+    {%load static%}
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
+        integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <style>
+        * {
+            font-family: Verdana, Geneva, Tahoma, sans-serif;
+        }
+
+        @media (max-width: 768px) {
+            .sticky-top {
+                height: 50px;
+            }
+
+            .nav-link {
+                font-size: 14px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .sticky-top {
+                height: 120px;
+            }
+            
+            h2 {
+                font-size: 16px;
+            }
+
+            .slc{
+                width: 200px;
+            }
+
+            .diva {
+                display: flex;
+                gap: 3px;
+            }
+
+            .diva a {
+                width: 65px;
+                height: 50px;
+                font-size: 15px;
+
+            }
+
+            .diva i {
+                display: none;
+            }
+
+            .divh2 {
+                display: none;
+            }
+
+            .divsec  {
+                display: grid !important;
+                grid-template-columns: 1fr !important;
+                grid-auto-rows: 1fr !important;
+                gap: 10px !important;
+            }
+
+            .nav-link {
+                font-size: 12px;
+            }
+            .h2i i{
+                display: none;
+            }
+        }
+    </style>
+</head>
+
+<body class="bg-dark">
+
+    <div class="sticky-top divnav" style="height: 70px;width: 100%;background-color: rgb(214, 213, 212);">
+        <div class="d-flex bd-highlight">
+            <img src="/static/image/logo.jpg" alt="" class="p-2 flex-shrink-1 bd-highlight mx-2" height="76px"
+                width="76px" style="border-radius: 50%;background-position: center;background-size: contain;">
+            <h2 class="text-center text-info p-2 w-100 bd-highlight h2i">
+                <i class="fa-regular fa-newspaper" style="color: #f08c19;"></i> <a href="/"
+                    style="text-decoration: none;">Monkey Top News</a>
+
+            </h2>
+            <h2 class="text-center text-warning py-2 w-100 bd-highlight divh2">
+                <span class="mx-4 fs-6 text-danger">{{data|length}}<i class="fa-solid fa-bucket mx-2"
+                        style="color: #d37a22;"></i></span>
+            </h2>
+            <div class="text-center text-warning py-3 w-100 bd-highlight diva">
+                <a href="send_file" class="btn btn-primary"><i class="fa-regular fa-file" style="color: #cd9d18;"></i>
+                    Send File</a>
+                <a href="get_news" class="btn btn-primary"><i class="fa-regular fa-file" style="color: #cd9d18;"></i>
+                    Get News</a>
+                <a href="clear_news" class="btn btn-primary"><i class="fa-regular fa-file" style="color: #cd9d18;"></i>
+                    Clear</a>
+            </div>
+
+
+        </div>
+        {% if messages %}
+        <ul class="messages">
+            {% for message in messages %}
+            <li{% if message.tags %} class="{{ message.tags }}" {% endif %}>
+                {% if message.level == DEFAULT_MESSAGE_LEVELS.ERROR %}Important: {% endif %}
+                <script>alert('{{ message }}')</script>
+                </li>
+                {% endfor %}
+        </ul>
+        {% endif %}
+    </div>
+    <div class="container my-2" style="width: 100%; overflow: hidden;">
+        <form action="/search_news" method="post">
+            {%csrf_token%}
+            <!-- <label for="" style="display: inline-block; margin-right: 10px;">Select Keyword And Search</label> -->
+            <select name="url" id="" class="slc" style="width: 350px;height: 30px;background: transparent;color: aliceblue;">
+                <option value="none" class="text-dark">Select Your Seaarch Keyword</option>
+                <option value="chief%20compliance%20officer%20appoint%" class="text-dark">chief compliance officer
+                    appoint</option>
+                <option value="general%20counsel%20appoint%" class="text-dark">general counsel appoint</option>
+                <option value="chief%20risk%20officer%20appoint%" class="text-dark">chief risk officer appoint</option>
+                <option value="chief%20legal%20officer%20appoint%" class="text-dark">chief legal officer appoint
+                </option>
+                <option value="chief%20sustainability%20officer%20appoint%" class="text-dark">chief sustainability
+                    officer appoint</option>
+                <option value="integrity%20and%20compliance%20officer%20appoint%" class="text-dark">integrity and
+                    compliance officer appoint</option>
+                <option value="chief%20diversity%C2%A0officer%C2%A0appoint%" class="text-dark">chief diversity officer
+                    appoint</option>
+            </select>
+            <!-- <label for="" style="display: inline-block; margin-right: 10px;">Select Duration Of News</label> -->
+            <select name="time_period" id=""
+                style="width: 240px; height: 30px;background: transparent;color: aliceblue;">
+                <option value="none" class="text-dark">Select Your News Duration</option>
+                <option value="%3A1h" class="text-dark">Past Hour</option>
+                <option value="%3A1d" class="text-dark">Past 24 Hour</option>
+                <option value="%3A7d" class="text-dark">Past Week</option>
+                <option value="%3A30d" class="text-dark">Past Month</option>
+            </select>
+            <button type="submit" style="margin-right: 10px;" class="btn btn-outline-primary">Search</button>
+        </form>
+    </div>
+    </div>
+    <div class="container my-2">
+
+        <div class="d-flex flex-wrap divsec" style="gap:5px;">
+            {% for i in data %}
+            <div class="card  text-dark mb-2 px-2 py-2"
+                style="max-width: 400px; max-height: 350px; flex: 1 1 30%;border: 1px solid rgb(106, 104, 104);">
+
+                <div class="card-body">
+                    <h5 class="card-title text-primary">{{i.tilte}}</h5>
+                    <div style="gap: 20px;">
+
+                        <p class="card-text text-dark">Date : {{i.date}}</p>
+                        <p class="card-text text-dark">Published : {{i.ago}}</p>
+
+                    </div>
+                    <a target='_blank' href="{{i.link}}" class="btn btn-outline-primary my-4">
+                        View News
+                    </a>
+
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    <script>
+        var myModal = document.getElementById('myModal')
+        var myInput = document.getElementById('myInput')
+
+        myModal.addEventListener('shown.bs.modal', function () {
+            myInput.focus()
+        })
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+        crossorigin="anonymous"></script>
+
+</body>
+
+</html>
