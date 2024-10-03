@@ -26,4 +26,8 @@ urlpatterns = [
     path('search_news',v.Search_News),
     # path('get_news',v.Get_news),
     path('clear_news',v.Clear_news),
+    path('add_bucket',v.Add_bucket),
+    path('remove/<int:id>',v.Remove),
+    path('delete_all',v.deleteAll),
+    path('filter_news',v.Filter_news),
 ]

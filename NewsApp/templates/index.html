@@ -1,179 +1,330 @@
+
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Monkey News</title>
-    {%load static%}
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
-        integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
-        integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg=="
-        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <title>Monkey Top News</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css">
     <style>
-        * {
-            font-family: Verdana, Geneva, Tahoma, sans-serif;
+        body {
+            background-color: #f8f9fa;
+            /* Light background */
         }
 
+        .header {
+            background-color: #343a40;
+            /* Dark header */
+            color: #fff;
+            padding: 20px 0;
+        }
+
+        .header h1 {
+            margin: 0;
+        }
+
+        .nav-link {
+            color: #fff !important;
+        }
+
+        .featured-card {
+            background-color: #ffffff;
+            /* White card */
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+
+        .category-title {
+            margin: 20px 0;
+        }
+
+        .news-title a {
+            text-decoration: none;
+
+        }
+
+        .news-title a:hover {
+            text-decoration: underline;
+            color: #007bff !important;
+        }
+
+        .footer {
+            text-align: center;
+            padding: 20px;
+            background-color: #343a40;
+            color: #f8f9fa;
+        }
+
+        .btn-outline-primary:hover {
+            background-color: #007bff;
+            color: #fff;
+        }
+
+        .card-img-top {
+            border-radius: 8px 8px 0 0;
+            /* Rounded top corners for images */
+        }
+
+        /* Custom Styles */
+        .navbar-nav .nav-link {
+            /* position: relative; */
+            transition: color 0.3s ease-in-out;
+            color: #343a40 !important;
+        }
+
+        .navbar-nav .nav-link:hover {
+            color: #f08c19 !important;
+        }
+
+        .navbar-nav .nav-link::after {
+            content: '';
+            /* position: absolute; */
+            left: 0;
+            bottom: -5px;
+            width: 0;
+            height: 2px;
+            background-color: #f08c19;
+            transition: width 0.3s ease-in-out;
+        }
+
+        .navbar-nav .nav-link:hover::after {
+            width: 100%;
+        }
+
+        /* Mobile responsive adjustments */
         @media (max-width: 768px) {
-            .sticky-top {
-                height: 50px;
+            .header h1 {
+                font-size: 1.8rem;
             }
 
-            .nav-link {
-                font-size: 14px;
+            .navbar-nav .nav-link {
+                font-size: 1rem;
             }
         }
 
-        @media (max-width: 480px) {
-            .sticky-top {
-                height: 120px;
-            }
-            
-            h2 {
-                font-size: 16px;
-            }
+        /* Set a fixed height and enable scrolling */
+        .scrollable-categories {
+            max-height: 250px;
+            /* Adjust height as needed */
+            overflow-y: auto;
+            /* Enable vertical scrolling */
+            padding-right: 15px;
+            /* Add some padding to avoid scrollbar overlap */
+        }
 
-            .slc{
-                width: 200px;
-            }
+        /* Add optional styles to make the scroll look smoother */
+        .scrollable-categories::-webkit-scrollbar {
+            width: 8px;
+        }
 
-            .diva {
-                display: flex;
-                gap: 3px;
-            }
+        .scrollable-categories::-webkit-scrollbar-thumb {
+            background-color: #d3d3d3;
+            border-radius: 10px;
+        }
 
-            .diva a {
-                width: 65px;
-                height: 50px;
-                font-size: 15px;
+        .scrollable-categories::-webkit-scrollbar-thumb:hover {
+            background-color: #a9a9a9;
+        }
 
-            }
+        .list-group-item:hover {
+            color: #f08c19 !important;
+        }
 
-            .diva i {
-                display: none;
-            }
+        .rem {
+            color: blue !important;
+            text-decoration: none;
+        }
 
-            .divh2 {
-                display: none;
-            }
-
-            .divsec  {
-                display: grid !important;
-                grid-template-columns: 1fr !important;
-                grid-auto-rows: 1fr !important;
-                gap: 10px !important;
-            }
-
-            .nav-link {
-                font-size: 12px;
-            }
-            .h2i i{
-                display: none;
-            }
+        .rem:hover {
+            color: red !important;
+            text-decoration: underline !important;
         }
     </style>
 </head>
 
-<body class="bg-dark">
-
-    <div class="sticky-top divnav" style="height: 70px;width: 100%;background-color: rgb(214, 213, 212);">
-        <div class="d-flex bd-highlight">
-            <img src="/static/image/logo.jpg" alt="" class="p-2 flex-shrink-1 bd-highlight mx-2" height="76px"
-                width="76px" style="border-radius: 50%;background-position: center;background-size: contain;">
-            <h2 class="text-center text-info p-2 w-100 bd-highlight h2i">
-                <i class="fa-regular fa-newspaper" style="color: #f08c19;"></i> <a href="/"
-                    style="text-decoration: none;">Monkey Top News</a>
-
-            </h2>
-            <h2 class="text-center text-warning py-2 w-100 bd-highlight divh2">
-                <span class="mx-4 fs-6 text-danger">{{data|length}}<i class="fa-solid fa-bucket mx-2"
-                        style="color: #d37a22;"></i></span>
-            </h2>
-            <div class="text-center text-warning py-3 w-100 bd-highlight diva">
-                <a href="send_file" class="btn btn-primary"><i class="fa-regular fa-file" style="color: #cd9d18;"></i>
-                    Send File</a>
-                <!-- <a href="get_news" class="btn btn-primary"><i class="fa-regular fa-file" style="color: #cd9d18;"></i>
-                    Get News</a> -->
-                <!-- <a href="clear_news" class="btn btn-primary"><i class="fa-regular fa-file" style="color: #cd9d18;"></i>
-                    Clear</a> -->
+<body>
+    <header class="header text-center sticky-top py-3"
+        style="background-color: #f8f9fa; border-bottom: 1px solid #dee2e6;">
+        <div class="container">
+            <!-- Title and Badge -->
+            <div class="d-flex justify-content-center align-items-center mb-3">
+                <h1 class="me-3" style="font-family: 'Roboto', sans-serif; color: #343a40;">
+                    <i class="fas fa-newspaper" style="color: #f08c19;"></i> Monkey Top News
+                </h1>
             </div>
 
 
-        </div>
-        
-    </div>
-    <div class="container my-2" style="width: 100%; overflow: hidden;">
-        <form action="/search_news" method="post">
-            {%csrf_token%}
-            <!-- <label for="" style="display: inline-block; margin-right: 10px;">Select Keyword And Search</label> -->
-            <select name="url" id="" class="slc" style="width: 350px;height: 30px;background: transparent;color: aliceblue;">
-                <option value="none" class="text-dark">Select Your Seaarch Keyword</option>
-                <option value="chief%20compliance%20officer%20appoint%" class="text-dark">chief compliance officer
-                    appoint</option>
-                <option value="general%20counsel%20appoint%" class="text-dark">general counsel appoint</option>
-                <option value="chief%20risk%20officer%20appoint%" class="text-dark">chief risk officer appoint</option>
-                <option value="chief%20legal%20officer%20appoint%" class="text-dark">chief legal officer appoint
-                </option>
-                <option value="chief%20sustainability%20officer%20appoint%" class="text-dark">chief sustainability
-                    officer appoint</option>
-                <option value="integrity%20officer%20appoint%" class="text-dark">integrity officer appoint
-                </option>
-                <option value="ethics%20officer%20appoint%" class="text-dark">ethics officer appoint 
-                </option>
-                    <option value="chief%20diversity%C2%A0officer%C2%A0appoint%" class="text-dark">chief diversity officer appoint</option>
-                    
-            </select>
-            <!-- <label for="" style="display: inline-block; margin-right: 10px;">Select Duration Of News</label> -->
-            <select name="time_period" id=""
-                style="width: 240px; height: 30px;background: transparent;color: aliceblue;">
-                <option value="none" class="text-dark">Select Your News Duration</option>
-                <option value="%3A1h" class="text-dark">Past Hour</option>
-                <option value="%3A1d" class="text-dark">Past 24 Hour</option>
-                <option value="%3A7d" class="text-dark">Past Week</option>
-                <option value="%3A30d" class="text-dark">Past Month</option>
-            </select>
-            <button type="submit" style="margin-right: 10px;" class="btn btn-outline-primary">Search</button>
-        </form>
-    </div>
-    </div>
-    <div class="container my-2">
-
-        <div class="d-flex flex-wrap divsec" style="gap:5px;">
-            {% for i in data %}
-            <div class="card  text-dark mb-2 px-2 py-2"
-                style="max-width: 400px; max-height: 350px; flex: 1 1 30%;border: 1px solid rgb(106, 104, 104);">
-
-                <div class="card-body">
-                    <h5 class="card-title text-primary">{{i.tilte}}</h5>
-                    <div style="gap: 20px;">
-
-                        <p class="card-text text-dark">Date : {{i.date}}</p>
-                        <p class="card-text text-dark">Published : {{i.ago}}</p>
-
+            <!-- Navigation Bar -->
+            <nav class="navbar navbar-expand-lg navbar-light">
+                <div class="container-fluid  text-center">
+                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                        aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation" style="margin-left:43%;">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+                    <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+                        <ul class="navbar-nav">
+                            <li class="nav-item mx-2">
+                                <a class="nav-link" href="/"
+                                    style="color: #343a40; font-size: 1.1rem; font-weight: 500;">Home</a>
+                            </li>
+                            {% if data %}
+                            <li class="nav-item mx-2">
+                                <a href="send_file" class="nav-link"
+                                    style="color: rgb(42, 210, 56); font-size: 1.1rem; font-weight: 500;">Send File</a>
+                            </li>
+                            <li class="nav-item mx-2">
+                                <a href="delete_all" class="nav-link"
+                                    style="color: rgb(188, 20, 20); font-size: 1.1rem; font-weight: 500;">Delete All</a>
+                            </li>
+                            {% else %}
+                            <li class="nav-item mx-2">
+                                <a class="nav-link" href="#latest"
+                                    style="color: #343a40; font-size: 1.1rem; font-weight: 500;">Latest News</a>
+                            </li>
+                            <li class="nav-item mx-2">
+                                <a class="nav-link" href="#categories"
+                                    style="color: #343a40; font-size: 1.1rem; font-weight: 500;">Categories</a>
+                            </li>
+                            {% endif %}
+                        </ul>
                     </div>
-                    <a target='_blank' href="{{i.link}}" class="btn btn-outline-primary my-4">
-                        View News
-                    </a>
+                </div>
+            </nav>
+        </div>
+    </header>
 
+    <div class="container my-1">
+        <div class="row">
+            <div class="col-md-8">
+                <!-- Scrollable Featured News Section -->
+                <div class="scrollable-news" style="height: 75vh; overflow-y: scroll; padding-right: 15px;">
+                    {%if keyword%}
+                    <h2 class="category-title">Featured News [<span class="fs-4"
+                            style="color: #201c16;font-weight: 700;">{{ keyword }}</span> <span
+                            class="badge fs-4 rounded-pill bg-warning text-danger" style="font-size: 1rem;">
+                            {{data|length}}</span>]</h2>
+                    {%else%}
+                    <h2 class="category-title">Featured News <span
+                            class="badge fs-4 rounded-pill bg-warning text-danger" style="font-size: 1rem;">
+                            {{data|length}}</span></h2>
+                    {%endif%}
+
+                    {%if data%}
+                    {% for i in data %}
+                    <div class="card featured-card mb-1">
+                        <div class="card-body">
+                            <h5 class="news-title">
+                                <a href="{{ i.url }}" target="_blank" class="text-dark">{{ i.title }}</a>
+                            </h5>
+                            <div class="d-flex" style="gap: 20px;">
+                                <p class="card-text text-muted">Date: {{ i.date }}</p>
+                                <a href="remove/{{ i.id }}" class="text-danger rem">Remove News</a>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                    {%else%}
+                    <div class="no-news text-center " style="margin-top: 50px;">
+                        <h3 class="text-danger">No news available at the moment</h3>
+                        <p>It seems there are no updates right now. Please check back later.</p>
+                        <button class="btn btn-primary mt-3" onclick="location.reload()">Refresh</button>
+                    </div>
+                    {%endif%}
                 </div>
             </div>
-            {% endfor %}
+
+            <!-- Fixed Search News and Categories Section -->
+            <div class="col-md-4 position-sticky" style="top: 10px;">
+                <h2 class="category-title">Search News</h2>
+                <form action="/search_news" method="post" class="d-flex flex-column mb-2">
+                    {% csrf_token %}
+                    <select name="url" class="form-select mb-1">
+                        <option value="none">Select Your Search Keyword</option>
+                        <option value="chief%20compliance%20officer%20appoint%">Chief Compliance Officer Appoint
+                        </option>
+                        <option value="general%20counsel%20appoint%">General Counsel Appoint</option>
+                        <option value="chief%20risk%20officer%20appoint%">Chief Risk Officer Appoint</option>
+                        <option value="chief%20legal%20officer%20appoint%">Chief Legal Officer Appoint</option>
+                        <option value="chief%20sustainability%20officer%20appoint%">Chief Sustainability Officer Appoint
+                        </option>
+                        <option value="integrity%20officer%20appoint%">Integrity Officer Appoint</option>
+                        <option value="ethics%20officer%20appoint%">Ethics Officer Appoint</option>
+                        <option value="chief%20diversity%20officer%20appoint%">Chief Diversity Officer Appoint</option>
+                    </select>
+                    <select name="time_period" class="form-select mb-1">
+                        <option value="none">Select Your News Duration</option>
+                        <option value="%3A1h">Past Hour</option>
+                        <option value="%3A1d">Past 24 Hours</option>
+                        <option value="%3A7d">Past Week</option>
+                        <option value="%3A30d">Past Month</option>
+                    </select>
+                    <button type="submit" class="btn btn-outline-primary">Search</button>
+                </form>
+
+                <h2 class="category-title">Categories</h2>
+                <form id="autoSubmitForm" method="POST" action="/filter_news">
+                    {% csrf_token %}
+
+                    <!-- Hidden radio buttons for each position -->
+                    <input type="radio" id="chief_compliance" name="position"
+                        value="chief%20compliance%20officer%20appoint%" style="display: none;">
+                    <input type="radio" id="general_counsel" name="position" value="general%20counsel%20appoint%"
+                        style="display: none;">
+                    <input type="radio" id="chief_risk" name="position" value="chief%20risk%20officer%20appoint%"
+                        style="display: none;">
+                    <input type="radio" id="chief_legal" name="position" value="chief%20legal%20officer%20appoint%"
+                        style="display: none;">
+                    <input type="radio" id="chief_sustainability" name="position"
+                        value="chief%20sustainability%20officer%20appoint%" style="display: none;">
+                    <input type="radio" id="integrity_officer" name="position" value="integrity%20officer%20appoint%"
+                        style="display: none;">
+                    <input type="radio" id="ethics_officer" name="position" value="ethics%20officer%20appoint%"
+                        style="display: none;">
+                    <input type="radio" id="chief_diversity" name="position"
+                        value="chief%20diversity%20officer%20appoint%" style="display: none;">
+
+                    <ul class="list-group scrollable-categories">
+                        <li class="list-group-item" onclick="selectOption('chief_compliance')" style="cursor: pointer;">
+                            Chief Compliance Officer Appoint</li>
+                        <li class="list-group-item" onclick="selectOption('general_counsel')" style="cursor: pointer;">
+                            General Counsel Appoint</li>
+                        <li class="list-group-item" onclick="selectOption('chief_risk')" style="cursor: pointer;">Chief
+                            Risk Officer Appoint</li>
+                        <li class="list-group-item" onclick="selectOption('chief_legal')" style="cursor: pointer;">Chief
+                            Legal Officer Appoint</li>
+                        <li class="list-group-item" onclick="selectOption('chief_sustainability')"
+                            style="cursor: pointer;">Chief Sustainability Officer Appoint</li>
+                        <li class="list-group-item" onclick="selectOption('integrity_officer')"
+                            style="cursor: pointer;">Integrity Officer Appoint</li>
+                        <li class="list-group-item" onclick="selectOption('ethics_officer')" style="cursor: pointer;">
+                            Ethics Officer Appoint</li>
+                        <li class="list-group-item" onclick="selectOption('chief_diversity')" style="cursor: pointer;">
+                            Chief Diversity Officer Appoint</li>
+                    </ul>
+                </form>
+
+
+            </div>
         </div>
     </div>
+
+    <footer class="footer mt-4">
+        <p>&copy; 2024 Monkey Top News. All rights reserved.</p>
+    </footer>
+
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        var myModal = document.getElementById('myModal')
-        var myInput = document.getElementById('myInput')
+        function selectOption(id) {
+            // Select the corresponding radio button
+            document.getElementById(id).checked = true;
 
-        myModal.addEventListener('shown.bs.modal', function () {
-            myInput.focus()
-        })
+            // Automatically submit the form
+            document.getElementById('autoSubmitForm').submit();
+        }
     </script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
-        crossorigin="anonymous"></script>
-
 </body>
 
 </html>

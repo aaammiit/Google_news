@@ -22,13 +22,14 @@ from email import encoders
 import os
 import json
 from django.contrib import messages
+from .models import *
 
 SMTP_SERVER = 'smtp.gmail.com'
 SMTP_PORT = 587
 SMTP_USERNAME = 'amistreetecom0101@gmail.com'
 SMTP_PASSWORD = 'xmxj ztoo dfvw bxtm'
 sender_email = 'amistreetecom0101@gmail.com'
-Receiver_email='worksample822@gmail.com'
+Receiver_email='newstracker@krimasolutions.com'
 
 subject = "News Alert"
 
@@ -47,158 +48,24 @@ json_data = json.dumps(dt, default=serialize_datetime)
 
 Record=[]
 def Home(request):
-    data=request.session.get('data')
+    # data=request.session.get('data')
+    # data={'data':data}
+    # data=[]
+    data=News_model.objects.all()
     data={'data':data}
     return render(request,'index.html',data)
 
 
+
 @tenacity.retry(wait=tenacity.wait_exponential(min=4, max=10), stop=tenacity.stop_after_attempt(3))
-def Get_news(request):
-        url_list=[
-    'https://news.google.com/search?q=general%20counsel%20appoint%20when%3A1d&hl=en-IN&gl=IN&ceid=IN%3Aen',
-    'https://news.google.com/search?q=chief%20compliance%20officer%20appoint%20when%3A1d&hl=en-IN&gl=IN&ceid=IN%3Aen',
-    'https://news.google.com/search?q=chief%20risk%20officer%20appoint%20when%3A1d&hl=en-IN&gl=IN&ceid=IN%3Aen',
-    'https://news.google.com/search?q=chief%20legal%20officer%20appoint%20when%3A1d&hl=en-IN&gl=IN&ceid=IN%3Aen',
-    'https://news.google.com/search?q=chief%20sustainability%20officer%20appoint%20when%3A1d&hl=en-IN&gl=IN&ceid=IN%3Aen',
-    'https://news.google.com/search?q=integrity%20and%20compliance%20officer%20appoint%20when%3A1d&hl=en-IN&gl=IN&ceid=IN%3Aen',
-    'https://news.google.com/search?q=chief%20diversity%C2%A0officer%C2%A0appoint%20when%3A1d&hl=en-IN&gl=IN&ceid=IN%3Aen'
-    ]
-        
-    
-        for url in range(len(url_list)):
-            today = datetime.today() 
-            response = requests.get(url_list[url])
-            soup = BeautifulSoup(response.content, 'html.parser')
-            new_records=[]
-            for article in soup.find_all('article'):
-                title_tag = article.find_all('a')[1]
-                if title_tag:
-                    title = title_tag.get_text(strip=True)
-                    relative_url = title_tag.get('href')
-                    if relative_url and relative_url.startswith('./'):
-                        url = 'https://news.google.com' + relative_url[1:]
-                        urls=url
-                    else:
-                        urls=relative_url    
-                date_tag = article.find('time')
-                if date_tag:
-                    date = date_tag.get('datetime')
-                    date = datetime.strptime(date, '%Y-%m-%dT%H:%M:%SZ').strftime('%Y-%m-%d')
-                    date=datetime.strptime(date, '%Y-%m-%d').date()
-                    date_str = date.isoformat()
-                    time_ago=date_tag.text 
-                    
-                record={
-                    'tilte':title,
-                    'link':urls,
-                    'date':date_str,
-                    'ago':time_ago
-                } 
-                if is_within_last_5_days(date): 
-                    if record not in Record:
-                        new_records.append(record)
-            print('Done',len(new_records))  
-            Record.extend(new_records)
-            print(type(Record))
-        sorted_list = sorted(Record, key=lambda x: x['date'], reverse=True)
-        Record1 = sorted_list
-        print(len(Record1))
-        request.session['data']=Record1
-        data={'data':Record1}
-        return render(request,'All_news.html',data)
-
-def update_news(request=None):
-    global Record
-    Get_news(request)
-    
-
-schedule.every(15).minutes.do(update_news)  # Run update_news every 5 minutes
-def run_scheduler():
-    while True:
-        schedule.run_pending()
-        time.sleep(1)
-
-scheduler_thread = threading.Thread(target=run_scheduler)
-scheduler_thread.daemon = True  # Set as daemon thread so it exits when main thread exits
-scheduler_thread.start()
-
-if __name__ == '__main__':
-    run_scheduler()  # or whatever command you use to run your web server
-
-
-    
-
-# def Send_file(request):
-#     data = request.session.get('data')
-#     data = {'data': data}
-
-#     # Create an Excel file
-#     wb = openpyxl.Workbook()
-#     ws = wb.active
-
-#     # Set the header row
-#     ws['A1'] = 'Title'
-#     ws['B1'] = 'Link'
-#     ws['C1'] = 'Date'
-
-#     # Iterate over the records and add them to the Excel file
-#     for i, record in enumerate(data['data']):  
-#         ws[f'A{i+2}'] = record['tilte']
-#         ws[f'B{i+2}'] = record['link']
-#         ws[f'C{i+2}'] = record['date']
-
-#     # Save the Excel file
-#     date_str = datetime.now().strftime("%B%d")
-#     current_time_str = datetime.now().strftime("%H%M%S")
-#     filename = f'{date_str}News_records{current_time_str}.xlsx'
-#     wb.save(filename)
-
-#     # Create the email message
-#     subject = "News Alerts"
-#     body = "Here The Top And Latest News Tilte Url And Links"  # Initialize the body as an empty string
-
-#     for record in data['data']:
-#         body += f"Title: {record['tilte']}, Link: {record['link']}\n"
-#     # Create a multipart message
-#     msg = MIMEMultipart()
-#     msg['Subject'] = subject
-#     msg['From'] = sender_email
-#     msg['To'] = Receiver_email
-#     msg['Date'] = formatdate(localtime=True)
-
-#     # Add the body to the message
-#     try:
-#         msg.attach(MIMEText(body, 'plain'))
-
-#         # Attach the Excel file
-#         attachment = open(f'{filename}', 'rb')
-#         part = MIMEBase('application', 'octet-stream')
-#         part.set_payload(attachment.read())
-#         encoders.encode_base64(part)
-#         part.add_header('Content-Disposition', "attachment; filename= news_records.xlsx")
-#         msg.attach(part)
-
-#         # Send the email
-#         server = smtplib.SMTP(SMTP_SERVER, SMTP_PORT)
-#         server.starttls()
-#         server.login(SMTP_USERNAME, SMTP_PASSWORD)
-#         server.sendmail(sender_email, Receiver_email, msg.as_string())
-#         server.quit()
-#         print('done')
-#         messages.success(request, "File Successfully Sent in Your Email")
-        
-           
-#     except:
-#         print('err')
-
-#     return redirect('/')
-
 def Search_News(request):
     News=[]
+    keyurl=''
     if request.method=='POST':
         url=request.POST.get('url')
         time_period=request.POST.get('time_period')
-        url=url
+        keyurl=url
+
         time_period=time_period
         if url != 'nome' and time_period !='none':
             base_url=f'https://news.google.com/search?q={url}20when{time_period}&hl=en-IN&gl=IN&ceid=IN%3Aen'
@@ -224,23 +91,29 @@ def Search_News(request):
                         date=datetime.strptime(date, '%Y-%m-%d').date()
                         date_str = date.isoformat()
                         time_ago=date_tag.text       
-                    record={
+                record={
                             'tilte':title,
                             'link':urls,
                             'date':date_str,
                             'ago':time_ago
                         } 
-                    if record not in Record:
-                        new_records.append(record)
-            News.extend(new_records)
-        else:
-            print('url and time period select None')
+                if record not in Record:
+                    new_records.append(record)
+        News.extend(new_records)
+    else:
+        print('url and time period select None')
+    new_list=[]
     sorted_list = sorted(News, key=lambda x: x['date'], reverse=True)
-    News = sorted_list
+    News1 = sorted_list
+    request.session['data']=News1
 
-    print(len(News))
-    if len(News) !=0:
-       data={'data':News}
+    # for i in sorted_list:
+    #     if i not in new_list:
+    #         print(len(new_list))
+
+    print(len(News1))
+    if len(News1) !=0:
+       data={'data':News1,'url':keyurl}
        return render(request,'news.html',data)
     else:
         msg={'msg':'Sorry, not any news to fetch.'}
@@ -264,89 +137,160 @@ def Send_file(request):
     url08='https://news.google.com/search?q=chief%20diversity%C2%A0officer%C2%A0appoint%20when%3A7d&hl=en-IN&gl=IN&ceid=IN%3Aen'
 
     url_list=[url01,url02,url03,url04,url05,url06,url07,url08]
+    new_records=[]
+    news=[]
     for url in range(len(url_list)):
-            today = datetime.today() 
-            response = requests.get(url_list[url])
-            soup = BeautifulSoup(response.content, 'html.parser')
-            new_records=[]
-            for article in soup.find_all('article'):
-                title_tag = article.find_all('a')[1]
-                if title_tag:
-                    title = title_tag.get_text(strip=True)
-                    relative_url = title_tag.get('href')
-                    if relative_url and relative_url.startswith('./'):
-                        url = 'https://news.google.com' + relative_url[1:]
-                        urls=url
-                    else:
-                        urls=relative_url    
-                date_tag = article.find('time')
-                if date_tag:
-                    date = date_tag.get('datetime')
-                    date = datetime.strptime(date, '%Y-%m-%dT%H:%M:%SZ').strftime('%Y-%m-%d')
-                    date=datetime.strptime(date, '%Y-%m-%d').date()
-                    date_str = date.isoformat()
-                    time_ago=date_tag.text 
+        today = datetime.today() 
+        response = requests.get(url_list[url])
+        soup = BeautifulSoup(response.content, 'html.parser')
+        for article in soup.find_all('article'):
+            title_tag = article.find_all('a')[1]
+            if title_tag:
+                title = title_tag.get_text(strip=True)
+                relative_url = title_tag.get('href')
+                if relative_url and relative_url.startswith('./'):
+                    url = 'https://news.google.com' + relative_url[1:]
+                    urls=url
+                else:
+                    urls=relative_url    
+            date_tag = article.find('time')
+            if date_tag:
+                date = date_tag.get('datetime')
+                date = datetime.strptime(date, '%Y-%m-%dT%H:%M:%SZ').strftime('%Y-%m-%d')
+                date=datetime.strptime(date, '%Y-%m-%d').date()
+                date_str = date.isoformat()
+                time_ago=date_tag.text 
                     
-                record={
+            record={
                     'tilte':title,
                     'link':urls,
                     'date':date_str,
                     'ago':time_ago
                 }
+            if record['tilte'] not in new_records:
                 new_records.append(record)
-            wb = openpyxl.Workbook()
-            ws = wb.active
+            
+        wb = openpyxl.Workbook()
+        ws = wb.active
                 
-            ws['A1'] = 'Title'
-            ws['B1'] = 'Link'
-            ws['C1'] = 'Date'
-            for i, record in enumerate(new_records):  
-                ws[f'A{i+2}'] = record['tilte']
-                ws[f'B{i+2}'] = record['link']
-                ws[f'C{i+2}'] = record['date']
-            date_str = datetime.now().strftime("%B%d")
-            current_time_str = datetime.now().strftime("%H%M%S")
-            filename = f'{date_str}News_records{current_time_str}.xlsx'
-            wb.save(filename)
+        ws['A1'] = 'Title'
+        ws['B1'] = 'Link'
+        ws['C1'] = 'Date'
+        for i, record in enumerate(new_records):  
+            ws[f'A{i+2}'] = record['tilte']
+            ws[f'B{i+2}'] = record['link']
+            ws[f'C{i+2}'] = record['date']
+        date_str = datetime.now().strftime("%B%d")
+        current_time_str = datetime.now().strftime("%H%M%S")
+        filename = f'{date_str}News_records{current_time_str}.xlsx'
+        wb.save(filename)
 
-            subject = "News Alerts"
-            body = "Here The Top And Latest News Tilte Url And Links"
+        subject = "News Alerts"
+        body = "Here The Top And Latest News Tilte Url And Links"
+        for record in new_records:
+            body += f"Title: {record['tilte']}, Link: {record['link']}\n"
 
-            msg = MIMEMultipart()
-            msg['Subject'] = subject
-            msg['From'] = sender_email
-            msg['To'] = Receiver_email
-            msg['Date'] = formatdate(localtime=True)
+        msg = MIMEMultipart()
+        msg['Subject'] = subject
+        msg['From'] = sender_email
+        msg['To'] = Receiver_email
+        msg['Date'] = formatdate(localtime=True)
 
-            try:
-                msg.attach(MIMEText(body, 'plain'))
+        try:
+            msg.attach(MIMEText(body, 'plain'))
 
                     # Attach the Excel file
-                attachment = open(f'{filename}', 'rb')
-                part = MIMEBase('application', 'octet-stream')
-                part.set_payload(attachment.read())
-                encoders.encode_base64(part)
-                part.add_header('Content-Disposition', f"attachment; filename= news_records.xlsx")
-                msg.attach(part)
+            attachment = open(f'{filename}', 'rb')
+            part = MIMEBase('application', 'octet-stream')
+            part.set_payload(attachment.read())
+            encoders.encode_base64(part)
+            part.add_header('Content-Disposition', f"attachment; filename= news_records.xlsx")
+            msg.attach(part)
 
                     # Send the email
-                server = smtplib.SMTP(SMTP_SERVER, SMTP_PORT)
-                server.starttls()
-                server.login(SMTP_USERNAME, SMTP_PASSWORD)
-                server.sendmail(sender_email, Receiver_email, msg.as_string())
-                server.quit()
-                print('sent')        
-            except:
-                print('err')
-            print(len(new_records))
-            new_records.clear()
+            server = smtplib.SMTP(SMTP_SERVER, SMTP_PORT)
+            server.starttls()
+            server.login(SMTP_USERNAME, SMTP_PASSWORD)
+            server.sendmail(sender_email, Receiver_email, msg.as_string())
+            server.quit()
+            print('sent')        
+        except:
+            print('err')
+        print(len(new_records))
+        new_records.clear()
     return redirect('/')
 
+def Add_bucket(request):
+    if request.method == 'POST':
+        urlkeyword=request.POST.get('url')
+        print(urlkeyword)
+        try:
+            news_ids = request.POST.getlist('news_ids')
+            print(news_ids,type(news_ids))
+            data = request.session.get('data')
+            for id in news_ids:
+                specific_data = data[int(id)]
+                model_instance = News_model(keyword=urlkeyword,title=specific_data['tilte'], url=specific_data['link'], date=specific_data['date'], publised=specific_data['ago'])
+                model_instance.save()
+                print('saved')
+            return redirect('/')
+        except Exception as e:
+            print(e)
+            return redirect('/')
+    else:
+        return redirect('/')
+        print('err')
 
 
-                
+def Remove(request,id):
+    data=News_model.objects.filter(id=id)
+    data.delete()
+    return redirect('/')
+
+def deleteAll(request):
+    data=News_model.objects.all()
+    try:
+        data.delete()
+        return redirect('/')
+    except News_model.DoesNotExist as e:
+        print(e)
+        return redirect('/')
 
 
+def Filter_news(request):
+    filterKeyword1=''
+    if request.method == 'POST':
+        position = request.POST.get('position')
+        if position:
+            data=News_model.objects.filter(keyword__icontains=position)
+            if position =='chief%20compliance%20officer%20appoint%':
+                filterKeyword='Chief Compliance Officer Appoint'
+
+            elif position =='general%20counsel%20appoint%':
+                filterKeyword='General Counsel Appoint'
+
+            elif position =='chief%20risk%20officer%20appoint%':
+                filterKeyword='Chief Risk Officer Appoint'
+
+            elif position =='chief%20legal%20officer%20appoint%':
+                filterKeyword='Chief Legal Officer Appoint'
+
+            elif position =='chief%20sustainability%20officer%20appoint%':
+                filterKeyword='Chief Sustainability Officer Appoint'
+
+            elif position =='integrity%20officer%20appoint%':
+                filterKeyword='Integrity Officer Appoint'
+
+            elif position =='ethics%20officer%20appoint%':
+                filterKeyword='Ethics Officer Appoint'
+
+            elif position =='chief%20diversity%20officer%20appoint%':
+                filterKeyword='Chief Diversity Officer Appoint'
+            filterKeyword1=filterKeyword
+            data={'data':data,'keyword':filterKeyword1}
+        return render(request,'index.html',data)  # Redirect after processing
+    else:
+        return redirect('/')
 
 
         
